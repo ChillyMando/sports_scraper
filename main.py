@@ -3,8 +3,8 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver import ActionChains
-from bs4 import BeautifulSoup
+import csv
+import datetime
 
 # TO-DO Simplify parsing functions
 
@@ -143,20 +143,39 @@ parse_list = []
 for line in text:
     parse_list.append(line)
 
-# driver.quit()
+driver.quit()
 
 del (parse_list[0:(parse_list.index('Money Line') - 3)])
 del (parse_list[parse_list.index('Outrights and Futures')-1:])
 
-moneyline = [['away', 'odds', 'home', 'odds', 'vig', 'date']]
+moneyline = [['Money Line'], ['away', 'odds', 'home', 'odds', 'vig', 'date']]
 moneyline_parse()
 
-spread = [['away', 'spread', 'odds', 'home', 'spread', 'odds', 'date']]
+spread = [['Spread'], ['away', 'spread',
+                       'odds', 'home', 'spread', 'odds', 'date']]
 spread_parse()
 
-total = [['away', 'home', 'score' 'over_odds', 'under_odds', 'vig', 'date']]
+total = [['Total'], ['away', 'home',
+                     'score' 'over_odds', 'under_odds', 'vig', 'date']]
 total_parse()
 
 print('Money Line: \n', moneyline, '\n')
 print('Spread: \n', spread, '\n')
 print('Totals: \n', total, '\n')
+
+current_datetime = datetime.datetime.now()
+current_datetime = current_datetime.strftime("%Y%m%d%H%M%S")
+
+csv_file_path = f"output/{current_datetime}.csv"
+
+with open(csv_file_path, mode='w', newline='') as file:
+    writer = csv.writer(file)
+
+    for row in moneyline:
+        writer.writerow(row)
+
+    for row in spread:
+        writer.writerow(row)
+
+    for row in total:
+        writer.writerow(row)
